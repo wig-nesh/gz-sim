@@ -309,7 +309,14 @@ sdf::Geometry gz::sim::convert(const msgs::Geometry &_in)
     out.SetType(sdf::GeometryType::BOX);
 
     sdf::Box boxShape;
-    boxShape.SetSize(msgs::Convert(_in.box().size()));
+    auto size = msgs::Convert(_in.box().size());
+
+    // Only allow positive sizes
+    if (size.X() <= 0) size.Set(-size.X());
+    if (size.Y() <= 0) size.Set(-size.Y());
+    if (size.Z() <= 0) size.Set(-size.Z());
+
+    boxShape.SetSize(size);
 
     out.SetBoxShape(boxShape);
   }
